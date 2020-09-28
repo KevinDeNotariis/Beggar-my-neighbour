@@ -7,7 +7,15 @@ void Game::assignCards(Deck deck) {
 }
 
 void Game::changeTurn() {
-    active_player = *active_player == player1 ? &player2 : &player1;
+    if(*active_player == player1){
+        active_player = &player2;
+        non_active_player = &player1;
+    }else{
+        active_player = &player1;
+        non_active_player = &player2;
+    }
+
+    //active_player = *active_player == player1 ? &player2 : &player1;
 }
 
 Game::Game () {
@@ -16,7 +24,12 @@ Game::Game () {
 void Game::initialize(Deck deck) {
     deck.shuffle();
     assignCards(deck);
+    table.resize(0);
+    penalty_to_pay = 0;
+    end_game = false;
+
     active_player = &player1;
+    non_active_player = &player2;
 }
 
 void Game::player1PlaysOneCard() {
@@ -29,5 +42,41 @@ void Game::player2PlaysOneCard() {
 
 void Game::activePlayerPlaysOneCard() {
     table.push_back(active_player->playTop());
+}
+
+bool Game::cardPlayedIsPenaltyCard(Card card_played) {
+    return (card_played.value == 1 || card_played.value == 2 || card_played.value == 3);
+}
+
+bool Game::activePlayerHasLost() {
+    return active_player->cards.size() == 0;
+}
+
+void Game::activePlayerPlays() {
+    do{
+        activePlayerPlaysOneCard();
+
+        if(cardPlayedIsPenaltyCard(table.back())){
+            penalty_to_pay = table.back().value;
+            break;
+        }
+        
+        if(activePlayerHasLost()) {
+            end_game = true;
+            break;
+        }
+
+        penalty_to_pay--;
+
+        if(penalty_to_pay == 0)
+            takeProfit();
+
+    }while(penalty_to_pay > 0);
+    
     changeTurn();
+}
+
+void Game::takeProfit() {
+    non_active_player->putUnder(table, "reversed");
+    table.resize(0);
 }

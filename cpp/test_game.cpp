@@ -53,18 +53,139 @@ void test_game() {
         }
     ));
 
-    test.add_test(test.assert_false(
-        "Test whether after a player - not paying - played a normal card (not special, i.e. 1, 2 and 3), then turn should pass to the other player",
-        "The active_player should change after playing a normal card",
+    test.add_test(test.assert_true(
+        "Test whether after takeProfit, the non-active player has gained the cards in the table",
+        "The non-active player should take the cards in the table",
         [&game] {
-            Player *active_player_before = game.active_player;
-            game.activePlayerPlaysOneCard();
-            return (*active_player_before == *game.active_player);
+            game.table.push_back(Card(8, "clubs"));
+            game.table.push_back(Card(4, "swords"));
+
+            game.takeProfit();
+
+            return (
+                (game.non_active_player->cards.at(0) == Card(4, "swords")) &&
+                (game.non_active_player->cards.at(1) == Card(8, "clubs"))
+            );
         }
     ));
 
     test.add_test(test.assert_true(
-        ""
+        "Test whether after takeProfit, the table has been reset to size 0",
+        "The table should be reset after takeProfit",
+        [&game] {
+            game.table.push_back(Card(8, "clubs"));
+            game.table.push_back(Card(4, "swords"));
+
+            game.takeProfit();
+
+            return game.table.size() == 0;
+        }
+    ));
+
+    test.add_test(test.assert_true(
+        "Test whether after a penalty card, say (2, clubs), has been played, then the non active player should play. in principle, two cards. Namely the penalty variable should be equals to the penalty",
+        "The penalty variable should store the penalty to pay",
+        [&game] {
+            game.active_player->cards.resize(0);
+            game.active_player->cards.push_back(Card(2, "clubs"));
+
+            game.activePlayerPlays();
+
+            return game.penalty_to_pay == 2;
+        }
+    ));
+
+    test.add_test(test.assert_true(
+        "Test whether when penalty is not zero, the active player should play the number of cards specified in penalty",
+        "The active player should pay the penalty",
+        [&game] {
+            game.active_player->cards.resize(0);
+            game.active_player->cards.push_back(Card(2, "clubs"));
+            game.non_active_player->cards.push_back(Card(4, "swords"));
+            game.non_active_player->cards.push_back(Card(5, "clubs"));
+
+            Player *paying_player = game.non_active_player;
+            unsigned cards_size_before = paying_player->cards.size();
+
+            game.activePlayerPlays();
+
+            game.activePlayerPlays();
+
+            return paying_player->cards.size() == cards_size_before-2;
+        }
+    ));
+
+    test.add_test(test.assert_true(
+        "Test whether after one player takes profit, the penalty is indeed reset to 0",
+        "The penalty should be reset after takeProfit",
+        [&game] {
+            game.active_player->cards.resize(0);
+            game.active_player->cards.push_back(Card(2, "clubs"));
+            game.non_active_player->cards.push_back(Card(4, "swords"));
+            game.non_active_player->cards.push_back(Card(5, "clubs"));
+
+            game.activePlayerPlays();
+
+            game.activePlayerPlays();
+
+            game.takeProfit();
+
+            return game.penalty_to_pay == 0;
+        }
+    ));
+
+    test.add_test(test.assert_true(
+        "Test whether after a player has finished paying his debt - without having played any penalty cards - the other player takes the profit",
+        "The non_active_player should take the profit after the paying player has finished paying",
+        [&game] {
+            game.active_player->cards.resize(0);
+            game.active_player->cards.push_back(Card(2, "clubs"));
+
+            Player *player_that_will_take_profit = game.active_player;
+
+            game.non_active_player->cards.push_back(Card(4, "swords"));
+            game.non_active_player->cards.push_back(Card(5, "clubs"));
+
+            game.activePlayerPlays();
+
+            game.activePlayerPlays();
+
+            return player_that_will_take_profit->cards.size() == 3;
+        }
+    ));
+
+    test.add_test(test.assert_true(
+        "Test whether when a player paying plays a penalty card, then the control switch to the other player that must start to pay",
+        "The active_player should switch immediately after a paying player plays a penalty card",
+        [&game] {
+            game.active_player->cards.resize(0);
+            game.active_player->cards.push_back(Card(2, "clubs"));
+            Player *initial_player = game.active_player;
+
+            game.non_active_player->cards.push_back(Card(1, "coins"));
+
+            game.activePlayerPlays();
+
+            game.activePlayerPlays();
+
+            return (
+                *game.active_player == *initial_player &&
+                game.table.size() == 2
+            );
+        }
+    ));
+
+    test.add_test(test.assert_true(
+        "Test whether after a player plays a non penalty card and the they have no more cards, the game finishes",
+        "The variable end_game should become true whenever a player finishes their cards after putting down a non penalty card",
+        [&game] {
+            game.active_player->cards.resize(0);
+            game.active_player->cards.push_back(Card(4, "clubs"));
+
+            game.activePlayerPlays();
+
+            return game.end_game == true;
+        }
     ));
 
     /*

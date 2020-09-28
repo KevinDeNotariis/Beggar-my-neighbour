@@ -3,6 +3,7 @@ cpp/Deck.obj
 cpp/Game.obj
 cpp/main.ilk
 cpp/main.pdb
+cpp/main.exe
 cpp/MyTest.obj
 cpp/Player.obj
 cpp/test_deck.obj
