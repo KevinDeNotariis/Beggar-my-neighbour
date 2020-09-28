@@ -17,6 +17,7 @@ public:
     std::vector<Card> table;
     int penalty_to_pay;
     bool end_game;
+    int num_of_turns;
 
     Game();
 
@@ -29,4 +30,8 @@ public:
     void activePlayerPlays();
 
     void takeProfit();
+
+    void print();
+
+    void play();
 };

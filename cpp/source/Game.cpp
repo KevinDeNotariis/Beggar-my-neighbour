@@ -1,5 +1,6 @@
-#include "Game.h"
+#include "../header/Game.h"
 #include <iostream>
+#include <string>
 
 void Game::assignCards(Deck deck) {
     player1.cards = std::vector<Card>(deck.cards.begin(), deck.cards.begin()+20);
@@ -27,6 +28,7 @@ void Game::initialize(Deck deck) {
     table.resize(0);
     penalty_to_pay = 0;
     end_game = false;
+    num_of_turns = 1;
 
     active_player = &player1;
     non_active_player = &player2;
@@ -54,13 +56,18 @@ bool Game::activePlayerHasLost() {
 
 void Game::activePlayerPlays() {
     do{
+        if(activePlayerHasLost()) {
+            end_game = true;
+            break;
+        }
+
         activePlayerPlaysOneCard();
 
         if(cardPlayedIsPenaltyCard(table.back())){
             penalty_to_pay = table.back().value;
             break;
         }
-        
+
         if(activePlayerHasLost()) {
             end_game = true;
             break;
@@ -74,9 +81,41 @@ void Game::activePlayerPlays() {
     }while(penalty_to_pay > 0);
     
     changeTurn();
+    num_of_turns++;
 }
 
 void Game::takeProfit() {
     non_active_player->putUnder(table, "reversed");
     table.resize(0);
+}
+
+void Game::print() {
+    std::cout << "--------------------------------------------" <<std::endl;
+    std::cout<< "Active player: ";
+    if(*active_player == player1)
+        std::cout << "Player 1";
+    else
+        std::cout << "Player 2";
+
+    std::cout << std::endl << std::endl;
+    
+
+    std::cout << "Player 1: " << std::endl;
+    player1.printCards();
+    
+    std:: cout << "Table: " << std::endl;
+    for(Card card: table)
+        std::cout << card;
+
+    std::cout << std::endl;
+
+    std::cout << "Player 2: " << std::endl;
+    player2.printCards();
+
+}
+
+void Game::play() {
+    while(!end_game) {
+        activePlayerPlays();
+    }
 }

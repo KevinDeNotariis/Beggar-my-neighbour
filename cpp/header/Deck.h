@@ -18,4 +18,5 @@ public:
 	int size() const;
 	Card popLast();
 	void shuffle();
+	void print();
 };

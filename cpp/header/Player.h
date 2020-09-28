@@ -26,4 +26,6 @@ public:
 
 	bool operator==(const Player&) const;
 	bool operator==(Player&) const;
+
+	void printCards();
 };

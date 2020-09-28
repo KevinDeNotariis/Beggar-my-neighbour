@@ -1,15 +1,14 @@
-#include "Deck.h"
+#include "../header/Deck.h"
 #include <algorithm>
 #include <chrono>
 #include <random>
+#include <iostream>
 
 Deck::Deck() {
 	initialize();
 }
 
 void Deck::initialize() {
-	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-
 	cards.resize(0);
 	std::vector<std::string> suits{ "clubs", "swords", "coins", "cups" };
 	for (std::string suit : suits)
@@ -37,5 +36,13 @@ Card Deck::popLast() {
 }
 
 void Deck::shuffle() {
+	seed = std::chrono::system_clock::now().time_since_epoch().count();
+
 	std::shuffle(cards.begin(), cards.end(), std::default_random_engine(seed));
+}
+
+void Deck::print() {
+	for(Card card : cards) {
+		std:: cout<< card;
+	}
 }

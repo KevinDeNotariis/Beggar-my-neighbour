@@ -6,8 +6,8 @@
 #include "test_deck.h"
 
 #include "MyTest.h"
-#include "Card.h"
-#include "Deck.h"
+#include "../header/Card.h"
+#include "../header/Deck.h"
 
 
 void test_deck() {

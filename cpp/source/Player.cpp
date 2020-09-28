@@ -1,4 +1,5 @@
-#include "Player.h"
+#include "../header/Player.h"
+#include <iostream>
 
 void Player::initialize(std::vector<Card> starting_cards) {
 	cards = starting_cards;
@@ -25,4 +26,11 @@ bool Player::operator==(const Player& player) const {
 
 bool Player::operator==(Player& player) const {
 	return (cards == player.cards);
+}
+
+void Player::printCards() {
+	for(Card card: cards) {
+		std::cout<<card;
+	}
+	std::cout << std::endl;
 }

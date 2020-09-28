@@ -1,4 +1,4 @@
-#include "Card.h"
+#include "../header/Card.h"
 #include <iostream>
 
 Card::Card(const Card& card) {

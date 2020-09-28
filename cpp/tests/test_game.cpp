@@ -1,8 +1,8 @@
 #include "test_game.h"
 #include "MyTest.h"
-#include "Game.h"
-#include "Deck.h"
-#include "Card.h"
+#include "../header/Game.h"
+#include "../header/Deck.h"
+#include "../header/Card.h"
 
 #include <map>
 #include <algorithm>

@@ -11,3 +11,5 @@ cpp/test_game.obj
 cpp/test_player.obj
 cpp/vc140.pdb
 cpp/.vscode
+cpp/main.obj
+cpp/NGames.obj

@@ -5,9 +5,9 @@
 
 #include "test_player.h"
 
-#include "Deck.h"
-#include "Card.h"
-#include "Player.h"
+#include "../header/Deck.h"
+#include "../header/Card.h"
+#include "../header/Player.h"
 #include "MyTest.h"
 
 void test_player() {
