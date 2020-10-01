@@ -45,18 +45,25 @@ int main() {
 
 	int thread_num = 1;
 	int games_num = 1;
+	bool exit = true;
 
-	std::cout << "How many games would you like to play? ";
+	while (exit) {
 
-	std::cin >> games_num;
+		std::cout << "How many games would you like to play? ";
 
-	std::cout << "How many threads? ";
+		std::cin >> games_num;
 
-	std::cin >> thread_num;
+		std::cout << "How many threads? ";
 
-	NGames games(games_num, deck, thread_num);
+		std::cin >> thread_num;
 
-	games.playGames();
+		NGames games(games_num, deck, thread_num);
 
-	std::cout << games.stat.getCompTime() / 1000000.0 << std::endl;
+		games.playGames();
+
+		std::cout << games.stat.getCompTime() / 1000000.0 << std::endl;
+
+		std::cout << "0: Exit, 1: Continue " << std::endl;
+		std::cin >> exit;
+	}
 }
