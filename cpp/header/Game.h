@@ -21,10 +21,7 @@ public:
 
     Game();
 
-    void initialize(Deck);
-
-    void player1PlaysOneCard();
-    void player2PlaysOneCard();
+    void initialize(Deck&);
     
     void activePlayerPlaysOneCard();
     void activePlayerPlays();

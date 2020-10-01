@@ -14,7 +14,7 @@ void test_game() {
     Deck deck;
     Game game;
 
-    test.set_up = [&game, deck]{
+    test.set_up = [&game, &deck]{
         game.initialize(deck);
     };
 

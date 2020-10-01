@@ -22,7 +22,7 @@ void Game::changeTurn() {
 Game::Game () {
 }
 
-void Game::initialize(Deck deck) {
+void Game::initialize(Deck& deck) {
     deck.shuffle();
     assignCards(deck);
     table.resize(0);
@@ -32,14 +32,6 @@ void Game::initialize(Deck deck) {
 
     active_player = &player1;
     non_active_player = &player2;
-}
-
-void Game::player1PlaysOneCard() {
-    table.push_back(player1.playTop());
-}
-
-void Game::player2PlaysOneCard() {
-    table.push_back(player2.playTop());
 }
 
 void Game::activePlayerPlaysOneCard() {

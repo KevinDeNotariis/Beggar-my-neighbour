@@ -13,3 +13,4 @@ cpp/vc140.pdb
 cpp/.vscode
 cpp/main.obj
 cpp/NGames.obj
+cpp/Stat.obj

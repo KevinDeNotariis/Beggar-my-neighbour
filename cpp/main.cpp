@@ -5,17 +5,17 @@
 #include "header/Game.h"
 #include "header/Deck.h"
 #include "header/Card.h"
+#include "header/NGames.h"
 
 #include <iostream>
 #include <vector>
 #include <map>
 #include <fstream>
+#include <ctime>
+#include <chrono>
 
-
+/*
 int main() {
-	//test_deck();
-	//test_player();
-	//test_game();
 
 	Deck deck;
 	Game game;
@@ -25,7 +25,7 @@ int main() {
 
 	std::map<int,int> stat;
 
-	for(int i = 0; i < 100000; i++){
+	for(int i = 0; i < 1000; i++){
 		game.initialize(deck);
 
 		p1 = game.player1;
@@ -38,12 +38,25 @@ int main() {
 		else
 			stat.insert(std::pair(game.num_of_turns, 1));
 	}
+}*/
 
-	/*std::fstream f;
-	f.open("stat.txt", std::fstream::in | std::fstream::out);
+int main() {
+	Deck deck;
 
-	for(auto& [key,value] : stat) {
-		f << key << "\t" << value << std::endl;
-	}
-	f.close(); */
+	int thread_num = 1;
+	int games_num = 1;
+
+	std::cout << "How many games would you like to play? ";
+
+	std::cin >> games_num;
+
+	std::cout << "How many threads? ";
+
+	std::cin >> thread_num;
+
+	NGames games(games_num, deck, thread_num);
+
+	games.playGames();
+
+	std::cout << games.stat.getCompTime() / 1000000.0 << std::endl;
 }
