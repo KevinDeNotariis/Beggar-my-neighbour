@@ -10,7 +10,9 @@ cpp/test_deck.obj
 cpp/test_game.obj
 cpp/test_player.obj
 cpp/vc140.pdb
-cpp/.vscode
 cpp/main.obj
 cpp/NGames.obj
 cpp/Stat.obj
+cpp/ThreadStat.obj
+cpp/main.lib
+cpp/main.exp

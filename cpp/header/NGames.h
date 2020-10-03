@@ -18,7 +18,9 @@ public:
     //statistics
     Stat stat;
 
-    NGames(int, Deck, int _num_of_threads = 1);
+    NGames();
+
+    void initialize(int, Deck, int _num_of_threads = 1);
 
     //Non-threading methods
     void playOneGame();

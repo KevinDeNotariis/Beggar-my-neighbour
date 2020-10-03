@@ -6,6 +6,7 @@
 #include "header/Deck.h"
 #include "header/Card.h"
 #include "header/NGames.h"
+#include "header/ThreadStat.h"
 
 #include <iostream>
 #include <vector>
@@ -13,37 +14,15 @@
 #include <fstream>
 #include <ctime>
 #include <chrono>
+#include <thread>
 
-/*
-int main() {
+#include <boost/archive/text_iarchive.hpp>
 
-	Deck deck;
-	Game game;
-
-	Player p1;
-	Player p2;
-
-	std::map<int,int> stat;
-
-	for(int i = 0; i < 1000; i++){
-		game.initialize(deck);
-
-		p1 = game.player1;
-		p2 = game.player2;
-
-		game.play();
-
-		if(stat.find(game.num_of_turns) != stat.end())
-			stat[game.num_of_turns]++;
-		else
-			stat.insert(std::pair(game.num_of_turns, 1));
-	}
-}*/
-
-int main() {
+void playNGames() {
 	Deck deck;
 
-	int thread_num = 1;
+	unsigned int thread_num = 1;
+	// std::thread::hardware_concurrency();
 	int games_num = 1;
 	bool exit = true;
 
@@ -52,18 +31,79 @@ int main() {
 		std::cout << "How many games would you like to play? ";
 
 		std::cin >> games_num;
-
+		// std::cout << "Number of Threads you can get is: " << thread_num << std::endl;
+ 
 		std::cout << "How many threads? ";
 
 		std::cin >> thread_num;
 
-		NGames games(games_num, deck, thread_num);
+		NGames games;
+		games.initialize(games_num, deck, thread_num);
 
 		games.playGames();
 
 		std::cout << games.stat.getCompTime() / 1000000.0 << std::endl;
 
+		std::cout << games.stat;
+
 		std::cout << "0: Exit, 1: Continue " << std::endl;
 		std::cin >> exit;
 	}
+}
+
+
+void playNGamesMTimes(int num_of_games, int num_of_times, int min_thread_num, int max_thread_num, ThreadStat& threadStat) {
+	Deck deck;
+	NGames games;
+	for(int i = min_thread_num; i <= max_thread_num; i++) {
+		for(int j = 0; j < num_of_times; j++){
+			games.initialize(num_of_games, deck, i);
+			games.playGames();
+			threadStat.feedThreadStat(i, games.stat.getCompTime());
+		}
+		std::cout << "Games played with " << i << " threads have been completed" << std::endl;
+	}
+}
+
+void playNGamesMTimesForEachNumberOfThreads(){
+/*
+	int num_of_games = 1;
+	int num_of_times = 1;
+	int min_thread_num = 1;
+	int max_thread_num = 1;
+ 
+	std::cout << "For how many games would you like to test? " ;
+	std::cin >> num_of_games;
+
+	std::cout << "How many times per each threads size should all these games be played? ";
+	std::cin >> num_of_times;
+
+	std::cout << "What is the minimum number of threads you wanna test? ";
+	std::cin >> min_thread_num;
+
+	std::cout << "What is the maximum number of threads you wanna test? ";
+	std::cin >> max_thread_num;
+
+	ThreadStat threadStat;
+
+	playNGamesMTimes(num_of_games, num_of_times, min_thread_num, max_thread_num, threadStat);
+	*/
+
+	ThreadStat threadStat;	
+
+	playNGamesMTimes(1000, 20, 1, 20, threadStat);
+	playNGamesMTimes(1000, 20, 300, 320, threadStat);
+
+	threadStat.computeTimeMean();
+	threadStat.num_of_games = 1000;
+	std::cout << threadStat.toString();
+
+	std::fstream f;
+	f.open("stat2.txt", std::fstream::in | std::fstream::out);
+	f << threadStat.toString();
+	f.close();
+}
+
+int main() {
+	playNGames();
 }

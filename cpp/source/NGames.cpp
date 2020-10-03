@@ -3,8 +3,19 @@
 #include <chrono>
 #include <functional>
 
-NGames::NGames(int _num_of_games, Deck _deck, int _num_of_threads) : num_of_games(_num_of_games), deck(_deck), num_of_threads(_num_of_threads) {
-    
+NGames::NGames() {
+    num_of_threads = 1;
+    num_of_games = 1;
+}
+
+void NGames::initialize(int _num_of_games, Deck _deck, int _num_of_threads) {
+    num_of_games = _num_of_games;
+    deck = _deck;
+    num_of_threads = _num_of_threads;
+
+    if (num_of_threads > 1) {
+        initializeDecksAndGamesForThreading();
+    }
 }
 
 // -------------- NO THREADS METHODS --------------------
@@ -22,7 +33,7 @@ NGames::NGames(int _num_of_games, Deck _deck, int _num_of_threads) : num_of_game
 /*  NO THR  */ 
 /*  NO THR  */ void NGames::playOneGameAndFeedStat() {
 /*  NO THR  */     playOneGame();
-/*  NO THR  */     stat.feed(game.num_of_turns, deck);
+/*  NO THR  */     stat.feed(game.num_of_turns, deck.cards);
 /*  NO THR  */ }
 /*  NO THR  */ 
 // -------------------------------------------------------
@@ -64,7 +75,7 @@ void NGames::playGamesInBatch(){
 
 void NGames::feedStatsAfterThreading() {
     for (int i = 0; i < num_of_threads; i++)
-        stat.feed(thread_games.at(i).num_of_turns, thread_decks.at(i));
+        stat.feed(thread_games.at(i).num_of_turns, thread_decks.at(i).cards);
 }
 
 void NGames::initializeDecksAndGamesForThreading() {
@@ -78,8 +89,6 @@ void NGames::playGamesWithThreads() {
 
     int batch_number = num_of_games / num_of_threads;
     int remainder = num_of_games % num_of_threads;
-
-    initializeDecksAndGamesForThreading();
     
     for(int i = 0; i < batch_number; i++) {
         playGamesInBatch();

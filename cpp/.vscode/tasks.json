@@ -1,0 +1,33 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "C/C++: cl.exe build active file",
+            "command": "cl.exe",
+            "args": [
+                "/std:c++17",
+                "/Zi",
+                "/EHsc",
+                "/Fe:",
+                "main.exe",
+                "${workspaceFolder}/*.cpp",
+                "${workspaceFolder}/tests/*.cpp",
+                "${workspaceFolder}/source/*.cpp",
+                "/I\"C:/Program Files/boost_1_74_0\"",
+                "/link",
+                "/LIBPATH:\"C:/Program Files/boost_1_74_0/stage/lib\"",
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
