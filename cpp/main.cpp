@@ -15,7 +15,9 @@
 #include <ctime>
 #include <chrono>
 #include <thread>
+#include <ostream>
 
+#include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
 void playNGames() {
@@ -104,6 +106,54 @@ void playNGamesMTimesForEachNumberOfThreads(){
 	f.close();
 }
 
+void playAndSerialize() {
+	Deck deck;
+	int games_num = 1;
+
+	NGames games;
+
+	std::cout << "How many games would you like to play? ";
+
+	std::cin >> games_num;
+	// std::cout << "Number of Threads you can get is: " << thread_num << std::endl;
+
+	games.initialize(games_num, deck);
+
+	games.playGames();
+
+	std::cout << games.stat;
+
+	std:: cout << "Serializing the data...." <<std::endl;
+
+	std::ofstream ofs("stat");
+	// save data to archive
+    {
+        boost::archive::text_oarchive oa(ofs);
+        // write class instance to archive
+        oa << games;
+    	// archive and stream closed when destructors are called
+    }
+
+}
+
+void readSerialization() {
+	std::cout << "Reading Serialization.... " << std::endl;
+
+	NGames games;
+	{
+        // create and open an archive for input
+        std::ifstream ifs("stat");
+        boost::archive::text_iarchive ia(ifs);
+        // read class state from archive
+        ia >> games;
+        // archive and stream closed when destructors are called
+    }
+	std::cout << games.stat;
+
+}
+
 int main() {
-	playNGames();
+	playAndSerialize();
+
+	readSerialization();
 }

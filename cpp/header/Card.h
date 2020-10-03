@@ -3,6 +3,10 @@
 #include <string>
 #include <ostream>
 
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/serialization/string.hpp>
+
 class Card
 {
 public:
@@ -16,5 +20,12 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const Card& card);
 	bool operator==(const Card& card);
 	bool operator==(const Card& card) const;
+
+	friend class boost::serialization::access;
+    
+    template <class Archive> void serialize(Archive & ar, const unsigned int version){
+		ar & value;
+		ar & suit;
+	}
 };
 

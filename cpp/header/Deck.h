@@ -4,6 +4,9 @@
 #include <string>
 #include "Card.h"
 
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 class Deck {
 public:
 	std::vector<Card> cards;
@@ -19,4 +22,10 @@ public:
 	Card popLast();
 	void shuffle();
 	void print();
+
+	friend class boost::serialization::access;
+    
+    template <class Archive> void serialize(Archive & ar, const unsigned int version){
+		ar & cards;
+	}
 };

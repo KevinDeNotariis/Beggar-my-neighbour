@@ -42,8 +42,8 @@ void operator<<(std::ostream& os, Stat stat) {
 
     os << stat.printBoxedTitle(length);
 
-    os << stat.wrapMessage("computation time: " + std::to_string(stat.getCompTime()) + stat.computation_time.second, length);
-    os << " " << stat.spacesBetweenAsterisk(length);
+    os << stat.wrapMessage("computation time: " + std::to_string(stat.getCompTime()) + " " + stat.computation_time.second, length);
+    os << stat.spacesBetweenAsterisk(length);
     os << stat.wrapMessage("number of games played: " + std::to_string(stat.numberOfGames()), length);
     os << stat.spacesBetweenAsterisk(length);
     os << stat.fillAsterisk(length);

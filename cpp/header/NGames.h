@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Game.h"
 #include "Stat.h"
 
@@ -39,4 +41,10 @@ public:
 
     //Let's play the game!
     void playGames();
+
+    friend class boost::serialization::access;
+
+    template <class Archive> void serialize(Archive & ar, const unsigned int version) {
+        ar & stat;
+    }
 };
