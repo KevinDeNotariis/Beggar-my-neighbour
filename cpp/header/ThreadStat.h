@@ -4,6 +4,9 @@
 #include <vector>
 #include <string>
 
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/map.hpp>
+
 class ThreadStat {
 public:
 	int num_of_games;
@@ -19,4 +22,11 @@ public:
 	void feedThreadStat(int num_of_threads, unsigned long long int comp_time);
 
 	std::string toString();
+	
+	friend class boost::serialization::access;
+	template<class Archive> void serialize(Archive & ar, unsigned int version) {
+		ar & num_of_games;
+		ar & threadStat;
+		ar & timeMean;
+	}
 };

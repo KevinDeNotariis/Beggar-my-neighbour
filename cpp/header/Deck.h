@@ -4,8 +4,8 @@
 #include <string>
 #include "Card.h"
 
-#include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
 
 class Deck {
 public:

@@ -19,7 +19,7 @@
             "browse": {
                 "path": [
                     "C:/Program Files/boost_1_74_0",
-                    "${workspaceFolder}/**"
+                    "${workspaceFolder}"
                 ]
             }
         }

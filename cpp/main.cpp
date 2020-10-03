@@ -19,6 +19,8 @@
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 
 void playNGames() {
 	Deck deck;
@@ -125,10 +127,10 @@ void playAndSerialize() {
 
 	std:: cout << "Serializing the data...." <<std::endl;
 
-	std::ofstream ofs("stat");
+	std::ofstream ofs("stat",std::ios_base::binary | std::ios_base::out);
 	// save data to archive
     {
-        boost::archive::text_oarchive oa(ofs);
+        boost::archive::binary_oarchive oa(ofs);
         // write class instance to archive
         oa << games;
     	// archive and stream closed when destructors are called
@@ -142,8 +144,8 @@ void readSerialization() {
 	NGames games;
 	{
         // create and open an archive for input
-        std::ifstream ifs("stat");
-        boost::archive::text_iarchive ia(ifs);
+        std::ifstream ifs("stat", std::ios_base::binary | std::ios_base::in);
+        boost::archive::binary_iarchive ia(ifs);
         // read class state from archive
         ia >> games;
         // archive and stream closed when destructors are called
