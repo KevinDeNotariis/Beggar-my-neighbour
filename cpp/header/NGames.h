@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "Stat.h"
+#include "LocalStat.h"
 
 #include <thread>
 #include <vector>
@@ -18,7 +19,7 @@ public:
     std::vector<Deck> thread_decks;
     
     //statistics
-    Stat stat;
+    LocalStat stat;
 
     NGames();
 

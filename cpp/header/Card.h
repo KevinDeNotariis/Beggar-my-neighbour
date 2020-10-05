@@ -17,6 +17,8 @@ public:
 	Card(int _value, std::string _suit) : value(_value), suit(_suit) {}
 	Card(const Card& card);
 
+	std::string toString();
+
 	friend std::ostream& operator<<(std::ostream& os, const Card& card);
 	bool operator==(const Card& card);
 	bool operator==(const Card& card) const;

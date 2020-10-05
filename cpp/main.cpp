@@ -7,6 +7,7 @@
 #include "header/Card.h"
 #include "header/NGames.h"
 #include "header/ThreadStat.h"
+#include "header/GlobalStat.h"
 
 #include <iostream>
 #include <vector>
@@ -16,6 +17,7 @@
 #include <chrono>
 #include <thread>
 #include <ostream>
+#include <functional>
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -48,7 +50,7 @@ void playNGames() {
 
 		std::cout << games.stat.getCompTime() / 1000000.0 << std::endl;
 
-		std::cout << games.stat;
+		std::cout << games.stat.toString();
 
 		std::cout << "0: Exit, 1: Continue " << std::endl;
 		std::cin >> exit;
@@ -108,54 +110,181 @@ void playNGamesMTimesForEachNumberOfThreads(){
 	f.close();
 }
 
-void playAndSerialize() {
-	Deck deck;
-	int games_num = 1;
-
+class Handler{
 	NGames games;
+	GlobalStat globalStat;
+	std::string globalStatFileName;
+	std::string statTableFileName;
 
-	std::cout << "How many games would you like to play? ";
+public:
 
-	std::cin >> games_num;
-	// std::cout << "Number of Threads you can get is: " << thread_num << std::endl;
+	Handler(std::string _globalStatFileName, std::string _statTableFileName) : globalStatFileName(_globalStatFileName), statTableFileName(_statTableFileName) {
+		std::cout << "Loading Statistics..." << std::endl;
+		deserializeGlobalStat();
+	}
 
-	games.initialize(games_num, deck);
+	int askForNumberOfGames() {
+		int num_of_games = 1;
 
-	games.playGames();
+		std::cout << "How many games do you wanna play? ";
+		std::cin >> num_of_games;
 
-	std::cout << games.stat;
+		return num_of_games;
+	}
 
-	std:: cout << "Serializing the data...." <<std::endl;
+	int askForNumberOfThreads() {
+		int num_of_threads = 1;
 
-	std::ofstream ofs("stat",std::ios_base::binary | std::ios_base::out);
-	// save data to archive
-    {
-        boost::archive::binary_oarchive oa(ofs);
-        // write class instance to archive
-        oa << games;
-    	// archive and stream closed when destructors are called
-    }
+		std::cout << "With how many threads? ";
+		std::cin >> num_of_threads;
 
-}
+		return num_of_threads;
+	}
 
-void readSerialization() {
-	std::cout << "Reading Serialization.... " << std::endl;
+	bool deserializeGlobalStat() {
+		std::ifstream ifs(globalStatFileName, std::ios_base::binary | std::ios_base::in);
+		if(ifs.is_open() == true){
+			boost::archive::binary_iarchive ia(ifs);
+			ia >> globalStat;
+			return true;
+		}
+		return false;
+	}
+	
+	void serializeGlobalStat(){
+		std::cout << "Serializing global statistics..." << std::endl;
 
+		std::ofstream ofs(globalStatFileName, std::ios_base::binary | std::ios_base::out);
+		boost::archive::binary_oarchive oa(ofs);
+		oa << globalStat;
+	}
+
+	void playNGamesWithoutThreads(){
+		int num_of_games = askForNumberOfGames();
+
+		Deck deck;
+		games.initialize(num_of_games, deck);
+		games.playGames();
+		
+		std::cout << games.stat.toString();
+
+		globalStat.feed(games.stat);
+		serializeGlobalStat();
+	}
+
+	void playNGamesWithThreads() {
+
+		int num_of_games = askForNumberOfGames();
+		int num_of_threads = askForNumberOfThreads();
+
+		Deck deck;
+		games.initialize(num_of_games, deck, num_of_threads);
+		games.playGames();
+
+		std::cout << games.stat.toString();
+
+		globalStat.feed(games.stat);
+		serializeGlobalStat();
+	}
+
+	void displayStatistics() {
+		std::cout << globalStat.toString();
+	}
+
+	void displayDeckWithMaximumNumOfTurns() {
+		std::cout << globalStat.longestGameToString() << std::endl;
+	}
+
+	void displayTable() {
+		std::cout << globalStat.displayTable() << std::endl;
+	}
+
+	void printTable() {
+		std::ofstream os(statTableFileName, std::ofstream::out);
+		globalStat.printTable(os);
+		os.close();
+	}
+
+	int askForInput() {
+		int choice = 0;
+
+		std::cout << "What do you wanna do? " << std::endl;
+		std::cout << "0: Exit" << std::endl;
+		std::cout << "1: Play N games without threading" << std::endl;
+		std::cout << "2: Play N games with M threads" << std::endl;
+		std::cout << "3: Display statistics" << std::endl;
+		std::cout << "4: Display one of the decks with the maximum number of turns" << std::endl;
+		std::cout << "5: Display the table: number of turns | number of occurences" << std::endl;
+		std::cout << "6 Print table with number of turns and number of occurences into .txt file" << std::endl;
+
+		std::cin >> choice;
+
+		return choice;
+	}
+
+	void takeAction(int choice) {
+		switch(choice) {
+			case 0:
+				break;
+			case 1:
+				playNGamesWithoutThreads();
+				break;
+			case 2:
+				playNGamesWithThreads();
+				break;
+			case 3:
+				displayStatistics();
+				break;
+			case 4:
+				displayDeckWithMaximumNumOfTurns();
+				break;
+			case 5:
+				displayTable();
+			case 6:
+				printTable();
+				break;
+			default:
+				std::cout << "Wrong Selection!!!" << std::endl;
+		}
+	}
+
+	void askAndDo() {
+		int choice = 0;
+		do {		
+			choice = askForInput();
+			
+			takeAction(choice);
+			
+		}while(choice != 0);
+	}
+
+};
+/*
+int main() {
 	NGames games;
-	{
-        // create and open an archive for input
-        std::ifstream ifs("stat", std::ios_base::binary | std::ios_base::in);
-        boost::archive::binary_iarchive ia(ifs);
-        // read class state from archive
-        ia >> games;
-        // archive and stream closed when destructors are called
-    }
-	std::cout << games.stat;
+	GlobalStat globalStat;
+	Handler handler;
+	std::string statFileName = "globalStat";
+	int num_of_games = 1;
 
+	if(handler.deserializeGlobalStat(globalStat, statFileName))
+		std::cout<<globalStat.toString();
+
+	std::cout << "How many games do you wanna play? ";
+	std::cin >> num_of_games;
+
+	handler.playNGamesWithoutThreads(games, num_of_games);
+
+	globalStat.feed(games.stat);
+
+	handler.serializeGlobalStat(globalStat, statFileName);
+
+	std::cout << globalStat.toString();
 }
+*/
 
 int main() {
-	playAndSerialize();
+	Handler handler("globalStat", "stat_table.txt");
 
-	readSerialization();
+	handler.askAndDo();
 }

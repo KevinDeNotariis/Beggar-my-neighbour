@@ -12,6 +12,7 @@ void NGames::initialize(int _num_of_games, Deck _deck, int _num_of_threads) {
     num_of_games = _num_of_games;
     deck = _deck;
     num_of_threads = _num_of_threads;
+    stat.reset();
 
     if (num_of_threads > 1) {
         initializeDecksAndGamesForThreading();
