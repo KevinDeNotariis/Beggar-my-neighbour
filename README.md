@@ -1,7 +1,7 @@
 # Beggar-my-neighbour
 The famouse game "Beggar my Neighbour"
 
-# ... In Progression ... (currently developping the c++ version in Test-Driven Development)
+# ... In Progress ... (currently developping the c++ version in Test-Driven Development)
 
 ## For the rules of the game, one can refer to the wikipedia page https://en.wikipedia.org/wiki/Beggar-my-neighbour.
 
